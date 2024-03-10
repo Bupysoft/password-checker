@@ -34,3 +34,15 @@ _API key length:_ 16 digits
 | 5 | Verify Deleting an Order with invalid ID (higher)  | Code 400 |  Pass  |
 | 6 | Verify Deleting an Order with letters in ID        | Code 400 |  Pass  |
 | 7 | Verify Deleting an Order with empty ID             | Code 405 |  Pass  |
+
+# Homework 10
+### **Tests:**
+| № | Test                                                                              | Expected | Status | Comments                                                                                                 |
+|:-:|:----------------------------------------------------------------------------------|:--------:|:------:|:---------------------------------------------------------------------------------------------------------|
+| 1 | Verify Successful login / correct messages                                        | Code 200 |  Pass  |                                                                                                          |
+| 2 | Verify Successful login with special characters in Username / correct messages    | Code 200 |  Pass  |                                                                                                          |
+| 3 | Verify Successful login with special characters in Password / correct messages    | Code 200 |  Pass  |                                                                                                          |
+| 4 | Verify Successful login with special characters in both fields / correct messages | Code 200 |  Pass  |                                                                                                          |
+| 5 | Verify Unsuccessful login with empty Username / correct messages                  | Code 400 |  Fail  | We receive code 500 (Internal server error) instead of code 400 (Bad Request). Needs more investigation. |
+| 6 | Verify Unsuccessful login with empty Password / correct messages                  | Code 400 |  Fail  | We receive code 500 (Internal server error) instead of code 400 (Bad Request). Needs more investigation. |
+| 7 | Verify Unsuccessful login with both empty fields / correct messages               | Code 400 |  Fail  | We receive code 500 (Internal server error) instead of code 400 (Bad Request). Needs more investigation. |

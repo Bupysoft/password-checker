@@ -329,8 +329,8 @@ public class RestApiMocked {
 
     @ParameterizedTest
     @CsvSource({
-            "User@123, passWord$4",   // Username with special characters
-            "User55, Qwerty!21",      // Password with special characters
+            "User@123, passWord",   // Username with special characters
+            "User55, Qwe^ty!21",      // Password with special characters
             "!@#$%, &*()_+-=",        // Both with special characters
     })
     void GetOrdersUserNameAndPasswordWithSpecialSymbolsAndCheckResponseHttpStatusIsOk(String username, String password) {
@@ -354,7 +354,7 @@ public class RestApiMocked {
     @CsvSource({
             ", passWord4", // Empty username
             "User55, ",    // Empty password
-            ", "       // Both empty
+            ", "       // Both empty fields
     })
     void NegativeCheckForEmptyFieldsAndCheckResponseHttpStatusIsBadRequest(String username, String password) {
         String responseBody = given()

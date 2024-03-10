@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import utils.RandomDataGenerator;
 
@@ -53,6 +54,7 @@ public class RestApiMocked {
                 .all()
                 .statusCode(HttpStatus.SC_OK);
     }
+
     @Test
     public void createOrderAndCheckResponseBody() {
         //OrderDtoMocked orderDtoMocked= new OrderDtoMocked("OPEN",0,"customer","56473256","hello",0);
@@ -67,8 +69,8 @@ public class RestApiMocked {
         orderDtoMocked.setComment("comment");
         orderDtoMocked.setId(1);
 
-        Gson gson=new Gson();
-        Response response=given()
+        Gson gson = new Gson();
+        Response response = given()
                 .contentType(ContentType.JSON)
                 .log()
                 .all()
@@ -79,9 +81,10 @@ public class RestApiMocked {
                 .extract()
                 .response();
         //deserialization
-        OrderDtoMocked orderReceived=gson.fromJson(response.asString(),OrderDtoMocked.class);
+        OrderDtoMocked orderReceived = gson.fromJson(response.asString(), OrderDtoMocked.class);
 
     }
+
     @Test
     public void updateOrderStatus() {
 
@@ -299,5 +302,75 @@ public class RestApiMocked {
                 .statusCode(HttpStatus.SC_METHOD_NOT_ALLOWED);
     }
 
+    // Homework N10
+
+    @ParameterizedTest
+    @CsvSource({
+            "User2, passWord4",
+            "User55, Qwerty421",
+            "User84, pswrd743"
+    })
+    void GetOrdersUserNameAndPasswordAndCheckResponseHttpStatusIsOk(String username, String password) {
+        String responseBody = given()
+                .log().all()
+                .queryParam("username", username)
+                .queryParam("password", password)
+                .when()
+                .get("/test-orders")
+                .then()
+                .log().all()
+                .statusCode(HttpStatus.SC_OK)
+                .extract()
+                .asString();
+
+        Assertions.assertTrue(responseBody.contains("Login successful for user: " + username));
+        Assertions.assertTrue(responseBody.contains("apiKey"));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "User@123, passWord$4",   // Username with special characters
+            "User55, Qwerty!21",      // Password with special characters
+            "!@#$%, &*()_+-=",        // Both with special characters
+    })
+    void GetOrdersUserNameAndPasswordWithSpecialSymbolsAndCheckResponseHttpStatusIsOk(String username, String password) {
+        String responseBody = given()
+                .log().all()
+                .queryParam("username", username)
+                .queryParam("password", password)
+                .when()
+                .get("/test-orders")
+                .then()
+                .log().all()
+                .statusCode(HttpStatus.SC_OK)
+                .extract()
+                .asString();
+
+        Assertions.assertTrue(responseBody.contains("Login successful for user: " + username));
+        Assertions.assertTrue(responseBody.contains("apiKey"));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            ", passWord4", // Empty username
+            "User55, ",    // Empty password
+            ", "       // Both empty
+    })
+    void NegativeCheckForEmptyFieldsAndCheckResponseHttpStatusIsBadRequest(String username, String password) {
+        String responseBody = given()
+                .log().all()
+                .queryParam("username", username)
+                .queryParam("password", password)
+                .when()
+                .get("/test-orders")
+                .then()
+                .log().all()
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
+                .extract()
+                .asString();
+
+        Assertions.assertTrue(responseBody.contains("id"));
+        Assertions.assertTrue(responseBody.contains("message"));
+    }
 
 }
